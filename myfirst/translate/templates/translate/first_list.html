@@ -1,0 +1,26 @@
+{% extends 'translate/index.html' %}
+
+{% block title %}
+	{{ block.super }}
+{% endblock %}
+
+{% block jumbotron %}
+	
+	<main role="main">
+
+		<!-- Main jumbotron for a primary marketing message or call to action -->
+		<div class="jumbotron">
+			<div class="container">
+				<h1 class="display-3">Услуги перевода</h1>
+				{% block learnmore %}{% endblock %}
+
+				<p><a class="btn btn-primary btn-lg" href="{% url 'learn_more_url' %}" role="button">Learn more &raquo;</a></p>
+			</div>
+		</div>
+
+		
+
+	</main>
+
+{% endblock %}
+

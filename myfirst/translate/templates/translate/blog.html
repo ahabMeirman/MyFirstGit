@@ -1,0 +1,64 @@
+{% extends 'translate/index.html' %}
+{% load static %}
+
+
+{% block content %}
+
+	{% for blog in blogs.object_list %}
+		<div class="card mb-4">
+			<div class="card-header">
+				{{blog.date}}
+			</div>
+			<div class="card-body">
+				<h5 class="card-title"> {{blog.title}} </h5>
+				<p class="card-text"> {{blog.text|truncatewords:20}}</p>
+				<a href="{{ blog.get_absolute_url }}" class="btn btn-light">Read</a>		
+			</div>
+			<div class="card-footer text-muted">
+				<a href="{% url 'view_blog_detail_url' title=blog.title  %}">
+					<img src="{% static "css/like.png" %}" width="25px" heigth="25px" name=""/>
+				</a>
+				
+					{{ like_number }}
+				
+			</div>
+<!-- Вот здесь обязательный параметр {% url 'view_blog_detail_url' title=blog.title %} указываем откуда берется title-->
+		</div>
+	{% endfor %}
+
+	{% if is_paginated %}
+		<nav aria-label="...">
+			<ul class="pagination">
+				<li class="page-item {% if not prev_url %} disabled {% endif %}">
+					<a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Previous</a>
+				</li>
+				{% for n in blogs.paginator.page_range %}
+
+					{% if blogs.number == n%}
+						<li class="page-item active" aria-current="page">
+							<a class="page-link" href="?page={{ n }}">{{ n }} 
+								<span class="sr-only">(current)</span>
+							</a>
+						</li>
+					{% elif n > blogs.number|add:-2 and n < blogs.number|add:2 %}
+
+						<li class="page-item">
+							<a class="page-link" href="?page={{ n }}">{{ n }}</a>
+						</li>
+					{% endif %}
+				{% endfor %}
+				
+				
+				<li class="page-item {% if not next_url %} disabled {% endif %}">
+					<a class="page-link" href="{{ next_url }}" tabindex="-1" aria-disabled="true">Next</a>
+				</li>
+			</ul>
+		</nav>
+	{% endif %}
+
+{% endblock %}
+
+
+
+
+

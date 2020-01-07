@@ -1,0 +1,16 @@
+{% extends 'translate/index.html' %}
+{% load static %}
+
+{% block content %}
+	<p>
+		{{ heading.title }}
+	</p>
+	{{ heading.text }}
+	<div class="Subscribe">
+		<p>
+			<a href="https://www.linkedin.com/shareArticle?mini=true&url=http://developer.linkedin.com&title=LinkedIn%20Developer%20Network&summary=My%20favorite%20developer%20program&source=LinkedIn {{ heading.get_absolute_url }}" target="_blank" rel="nofollow">
+				<img src="{% static "css/linkedin.png" %}">
+			</a>
+		</p>
+	</div>
+{% endblock %}

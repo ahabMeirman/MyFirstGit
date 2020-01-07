@@ -1,0 +1,17 @@
+.root{
+	padding-right: 50px;
+}
+.jumbotron {
+	color: #FFFFFF;
+	background: #FFDD00;
+	
+}
+.display {
+	color: #E2EBF9;
+}
+.Subscribe:hover{
+	color: #E2EBF9;
+}
+.Subscribe {
+	background: #E2EBF9;
+}
