@@ -136,3 +136,6 @@ EMAIL_HOST_PASSWORD = 'Meirman170790'      # пароль от ящика
 EMAIL_PORT = 2525                   # порт для подключения
 EMAIL_USE_TLS = True                     # использование протокола шифрования
 DEFAULT_FROM_EMAIL = 'meirman_ahab_90@mail.ru' # email, с которого будет отправлено письмо
+
+#после авторизации перекидывает на эту страницу:
+LOGIN_REDIRECT_URL = '/translate/'
