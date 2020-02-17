@@ -11,21 +11,19 @@
 			</div>
 			<div class="card-body">
 				<h5 class="card-title"> {{blog.title}} </h5>
-				<p class="card-text"> {{blog.text|truncatewords:20}}</p>
+				<p class="card-text"> {{ blog.text|truncatewords:20|safe }}</p> <!-- фильтр safe убирает html теги, здесь мы используем плагин SKEditor -->
 				<a href="{{ blog.get_absolute_url }}" class="btn btn-light">Read</a>		
 			</div>
+			
 			<div class="card-footer text-muted">
-				<a href="{% url 'view_blog_detail_url' title=blog.title  %}">
-					<img src="{% static "css/like.png" %}" width="25px" heigth="25px" name=""/>
-				</a>
-				
-					{{ like_number }}
 				
 			</div>
 <!-- Вот здесь обязательный параметр {% url 'view_blog_detail_url' title=blog.title %} указываем откуда берется title-->
 		</div>
+		
 	{% endfor %}
 
+<!-- Пагинация -->
 	{% if is_paginated %}
 		<nav aria-label="...">
 			<ul class="pagination">
@@ -58,7 +56,6 @@
 
 {% endblock %}
 
+{% block javascript %}
 
-
-
-
+{% endblock %}

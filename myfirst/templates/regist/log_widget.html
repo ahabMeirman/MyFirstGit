@@ -1,0 +1,31 @@
+{% extends 'translate/index.html' %}
+{% block content %}
+	<form action="{% url 'log_url' %}" method="post">
+			{% csrf_token %}
+
+			{% for field in form %}
+				<div class="form-group">
+
+					{% if field.errors %}
+						<div class="alert alert-danger">
+							{{ field.errors }}
+						</div>
+					{% endif %}
+					
+					{{ field.label }}
+					{{ field }}
+			
+
+				</div>
+			{% endfor %}
+
+	
+
+			<button type="submit" class="btn btn-primary">Войти</button>
+			<p> If you want sign up, please click here </p>
+			<a class="btn btn-primary" href="{% url 'signup' %}" role="button">Sign Up</a>
+	</form>
+
+
+{% endblock %}
+

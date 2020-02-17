@@ -9,7 +9,18 @@
 {% block content %}
 	<div class="mb-1">
 		<p><h1>{{ blog.title}}</h1></p>
-		<p>{{ blog.text }}</p>
+		<p>{{ blog.text|safe }}</p> <!-- фильтр safe убирает html теги, здесь мы используем плагин SKEditor -->
+			
+			<!-- Система лайков -->
+		
+			<div data-id="{{ blog.title }}" data-type="blog" data-action="like" title="Нравится">
+				<span><img src="{% static "like.png" %}" width="25px" heigth="25px" name=""/></span>
+				<span data-count="like">{{ blog.votes.likes.count }}</span>
+			</div>
+			<div data-id="{{ blog.title }}" data-type="blog" data-action="dislike" title="Не рравится">
+				<span><img src="{% static "dislike.png" %}" width="25px" heigth="25px" name=""/></span>
+				<span data-count="dislike">{{ blog.votes.dislikes.count }}</span>
+			</div>
 
 		<p>{{ like_number }}</p>
 		<h3>Комментарии:</h3>
@@ -39,7 +50,12 @@
 			<button type="submit" class="btn btn-primary">Create Comment</button>
 		</form>
 
-
+		<!-- Система закладок -->
+		<div data-title="{{ blog.title }}" data-type="blog" data-action="bookmark"  title="Избранное">
+		    <span ><img id="bookmark_img" src="{% static "bookmark.svg" %}" alt="" width="32" height="32" title="Bootstrap"></span>
+		    <span data-count="bookmark">{{ get_bookmark_counts }}</span>
+		</div>
+		
 		<!-- Это для отоброжения популярных статей-->
 		<ul class="list-group">
 			<li class="list-group-item active"><strong>Популярные публикации за неделю</strong></li>
@@ -54,4 +70,123 @@
 		
 	</div>
 	
+{% endblock %}
+
+{% block javascript %}
+	<script type="text/javascript">
+		// Получение переменной cookie по имени
+		function getCookie(name) {
+			var cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				var cookies = document.cookie.split(';');
+				for (var i = 0; i < cookies.length; i++) {
+						var cookie = jQuery.trim(cookies[i]);
+	            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		            	cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            		break;
+            			}
+        			}
+    			}
+    		return cookieValue;
+		}
+
+		// Настройка AJAX
+		$(function () {
+			$.ajaxSetup({
+				headers: { "X-CSRFToken": getCookie("csrftoken") }
+			});
+		});
+
+
+
+
+		function to_bookmarks(){
+			
+			var current = $(this);
+			var type = current.data('type');
+			var title = current.data('title');
+			var action = current.data('action');						
+			
+			$.ajax({
+				
+				url : '{% url "blog_bookmark" title=blog.title %}',
+				type : 'POST',
+				
+				
+				dataType : 'json',
+				success : function(data){
+					if(data.valid){
+						$('#bookmark_img').attr('src', '/static/bookmark-fill.svg');
+						current.find("[data-count='" + action + "']").text(data.count);
+					} else {
+						$('#bookmark_img').attr('src', '/static/bookmark.svg');
+						current.find("[data-count='" + action + "']").text(data.count);
+					}
+				}
+
+			});
+
+			return false;
+			
+		}
+
+
+		function like(){
+			var like = $(this);
+			var type = like.data('type');
+			var action = like.data('action');
+			var title = like.data('title');
+			var dislike = like.next();
+
+			alert('ajax');
+
+			$.ajax({
+
+				url : '{% url "blog_like_url" title=blog.title %}',
+				type : 'POST',
+				dataType : 'json',
+				success : function(data){
+					like.find("[data-count='like']").text(data.like_count);
+					dislike.find("[data-count='dislike']").text(data.dislike_count);
+				}
+
+
+			});
+			return false;
+		}
+
+
+		function dislike(){
+			var dislike = $(this);
+			var type = dislike.data('type');
+			var action = dislike.data('action');
+			var title = dislike.data('title');
+			var like = dislike.prev();
+
+			alert('ajax');
+
+			$.ajax({
+
+				url : '{% url "blog_dislike_url" title=blog.title %}',
+				type : 'POST',
+				dataType : 'json',
+				success : function(data){
+					dislike.find("[data-count='dislike']").text(data.dislike_count);
+					like.find("[data-count='like']").text(data.like_count);
+				}
+
+
+			});
+			return false;
+		}
+
+		// Подключение обработчика
+		$(function(){
+			$('[data-action="bookmark"]').click(to_bookmarks);
+			$('[data-action="like"]').click(like);
+			$('[data-action="dislike"]').click(dislike);
+		});
+
+	</script>
 {% endblock %}

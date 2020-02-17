@@ -15,11 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from translate.views import * #можно сократить. необезательно использовать все 
 
 urlpatterns = [
+    path('admin/log/', MyLoginView.as_view()),
     path('admin/', admin.site.urls),
+    path('ckeditor/', include('ckeditor_uploader.urls')),# обязательно в корневом файле подключение
     path('translate/', include('translate.urls')),
     #Add Django site authentication urls (for login, logout, password management)
-    path('accounts/', include('django.contrib.auth.urls')),
-
+    #path('accounts/', include('django.contrib.auth.urls')),
+    
 ]

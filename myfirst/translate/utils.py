@@ -36,8 +36,13 @@ class ObjectDaetailViewPostMixin:
 		f = self.form_take
 		comments_id = obj.id
 		
+		#Данные из модуля BookmarkBlog___________________________________
+		#это у нас отоброжает общее количества закладок на определенную статью
+		#bookmarkblog_set - это related_name обратная связь 
+		get_bookmark_counts = obj.bookmarkblog_set.all().count()
+		
 
-#предстовление для отоброжения популяр статей
+#предстовление для отоброжения популяр статей_______________________________
 
 
 		obj_key, created = BlogCommonStatistic.objects.get_or_create(defaults = {"blog_key" : obj, "date" : timezone.now()}, date = timezone.now(), blog_key = obj)
@@ -59,4 +64,4 @@ class ObjectDaetailViewPostMixin:
 		# отсортируем записи по убыванию
 		'-views')[:5]  # Заберём последние пять записей
 
-		return render(request, self.template, context = {self.model.__name__.lower(): obj, 'comments': Comments.objects.filter(reletionships_id=comments_id),'form': f, 'popular_list': popular, })
+		return render(request, self.template, context = {self.model.__name__.lower(): obj, 'comments': Comments.objects.filter(reletionships_id=comments_id),'form': f, 'popular_list': popular, 'get_bookmark_counts' : get_bookmark_counts, })
