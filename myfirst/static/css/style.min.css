@@ -1,0 +1,15 @@
+.root{padding-right:50px}
+.jumbotron{color:#fff;background:#fd0}
+.display{color:#e2ebf9}
+.Subscribe:hover{color:#e2ebf9}
+.Subscribe{background:#e2ebf9}
+.menu-link{display:block;width:50px;height:50px;background-color:#fff;border-radius:50%;box-shadow:1px 1px 10px rgba(0,0,0,.4);position:fixed;top:50px;left:20px}
+.menu-link span,span:after,span:before{display:block;height:2px;width:18px;position:absolute;left:50%;margin-left:-9px;top:50%;margin-top:-1px;background-color:#333}
+span:before{transition:all .2s;content:'';margin-top:-6px}
+span:after{transition:all .2s;content:'';margin-top:4px}
+.menu-link_active span{background-color:transparent}
+.menu-link_active span:before{transform:rotate(45deg);margin-top:0}
+.menu-link_active span:after{transform:rotate(-45deg);margin-top:0}
+body{background-color:red}
+.men-item{display:block;position:fixed;cursor:pointer;top:100px}
+.men-item .submenu{height:40px;width:120px;background:green;position:relative;cursor:pointer}

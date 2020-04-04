@@ -18,6 +18,9 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from translate.views import * #можно сократить. необезательно использовать все 
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/log/', MyLoginView.as_view()),
     path('admin/', admin.site.urls),
@@ -25,5 +28,10 @@ urlpatterns = [
     path('translate/', include('translate.urls')),
     #Add Django site authentication urls (for login, logout, password management)
     #path('accounts/', include('django.contrib.auth.urls')),
-    
+    path('pages/', include('django.contrib.flatpages.urls')),#flatpages
 ]
+
+# File Upload:
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

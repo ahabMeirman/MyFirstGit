@@ -6,6 +6,28 @@
 		{{ heading.title }}
 	</p>
 	{{ heading.text }}
+	<p>
+		{% if heading.file_upload  %}
+			{{ heading.file_upload.name|truncatewords:1 }}
+			<a href="{{ heading.file_upload.url }}" class="btn btn-primary btn-sm" target="_blank">Download File</a>
+		{% endif %}
+
+		{% if heading.cover %}
+			<a href="{{ heading.cover.url }}">
+				<img src="{{ heading.cover.url }}" alt="" style="width:200px;">
+			</a>
+			
+		{% endif %}
+		<p>
+			{% if heading.file_upload or heading.cover %}
+				<form method="post" action="{{ heading.get_absolute_url }}">
+					{% csrf_token %}
+					<button type="submit" class="btn btn-danger">Delete file</button>
+				</form>
+			{% endif %}
+		</p>
+	</P>
+	
 	<div class="Subscribe">
 		<p>
 			<a href="https://www.linkedin.com/shareArticle?mini=true&url=http://developer.linkedin.com&title=LinkedIn%20Developer%20Network&summary=My%20favorite%20developer%20program&source=LinkedIn {{ heading.get_absolute_url }}" target="_blank" rel="nofollow">

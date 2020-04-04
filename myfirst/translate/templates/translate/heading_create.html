@@ -1,12 +1,15 @@
 {% extends 'translate/index.html' %}
+
+{# Это приложения предноз-на для отоброжения в шаблоне загружаемых файлов #}
+{% load crispy_forms_tags %}
 	
 {% block title %}
 	Heading create - {{ block.super }}
 {% endblock %}
 
 {% block content %}
-
-	<form action="{% url 'heading_create_url' %}" method="post">
+	{# здесь обязательно нужно добавить enctype="multipart/form-data" для того чтобы загружать файлы #}
+	<form action="{% url 'heading_create_url' %}" method="post" enctype="multipart/form-data">
 		{% csrf_token %}
 
 		{% for field in form %}
@@ -18,8 +21,8 @@
 					</div>
 				{% endif %}
 
-				{{ field.label }}
-				{{ field }}
+				
+				{{ field|as_crispy_field }}
 
 			</div>
 		{% endfor %}

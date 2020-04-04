@@ -1,14 +1,18 @@
 {% load static %}
+{% load flatpages %}
 
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap4/bootstrap.min.css' %}">
+	<link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-	<link href="{% static "css/style.css" %}" rel="stylesheet" type="text/css"/>
+
+	
 
 	<title>
 		{% block title %} Переводчиские услуги {% endblock %}
@@ -16,10 +20,10 @@
 
 </head>
 
-<body>
+<body> <!-- <body onclick = "link_click(event)" - используется для моей функции в blog.html> -->
 
 	<!-- Верхняя шапка меню -->
-	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+	<nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark">
 		<a class="navbar-brand" href="{% url 'blog_url' %}">Blog</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -34,13 +38,13 @@
 					<a class="nav-link" href="{% url 'send_contact_url' %}">Contact</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link disabled" href="#">Disabled</a>
+					<a class="nav-link" href="#" data-toggle="modal" data-target="#exampleModal">Modal action</a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown01">
-						<a class="dropdown-item" href="#">Action</a>
-						<a class="dropdown-item" href="#">Another action</a>
+						<a class="dropdown-item" href="{% url 'export_users_csv' %}">download data users excel</a>
+						<a class="dropdown-item" href="{% url 'heading_create_url' %}">Creat heading</a>
 						<a class="dropdown-item" href="#">Something else here</a>
 					</div>
 				</li>
@@ -48,21 +52,56 @@
 			<!-- Смотри как делается поиск и запомни это важно-->
 			<form class="form-inline my-2 my-lg-0" action="{% url "blog_url" %}">
 				<input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				<button id="search_dropdown" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search
+				</button>
 			</form>
 		</div>
 	</nav>
-    
+	
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal" aria-hidden="true" >
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			</div>
+		</div>		
+	</div>
+	
+	<div id="sear">
+		<ul class="men-item col-6">
+			Меню1
+			<li class="submenu">
+				Подменю1
+			</li>
+			<li class="submenu">
+				Подменю2
+			</li>
+			<li class="submenu">
+				Подменю3
+			</li>
+		</ul>
+
+	</div>
+	
+	<a class="menu-link menu-link_active" href="#menu">
+		<span></span>
+	</a> 
+
+	<h1 id="ahab">AHAB</h1>   
 
 {% block jumbotron %}
 
 {% endblock %}
 
 
-<div class="container">
+<div class="container-fluid">
 	<!-- Example row of columns -->
 	
-	<div class="row">
+	<div class="row text-center justify-content-center">
 		{% for heading in headings %}
 
 			<div class="col-md-4">
@@ -88,7 +127,7 @@
 
 
 <!-- Это блог с комментариями и лайками -->
-<div class="container mt-5"> <!-- Это настройки выведены за пределами {{block}} верхние и боковые отступы -->
+<div class="container-fluid"> <!-- Это настройки выведены за пределами {{block}} верхние и боковые отступы -->
 	<div class="row">
 		<div class="col-6 offset-md-2">
 
@@ -122,9 +161,16 @@
 </div>
 
 
-
+{% get_flatpages as flatpages %}
 <footer class="root">
- 	<p>&copy; artAhab company 2018-2019</p>
+	{% for page in flatpages %}
+		<a href="/pages{{ page.url }}">
+			<p>&copy; artAhab company 2018-2019</p>
+	 	</a>
+	 {% endfor %}
+
+{% load translate %}
+{% get_attribute 'SITE_URL' %} 	
 </footer>
 
 
@@ -133,6 +179,13 @@
 <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <!-- обязательно блок прописываем после инициализации настроек javascript -->
+<script type="text/javascript" src="{% static 'JavaScript/dropdownSearch.js' %}"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
 {% block javascript %}{% endblock %}
 
 </body>

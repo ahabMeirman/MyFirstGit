@@ -34,7 +34,7 @@ from likes.models import LikeDislike#Это ContentType
 
 from django.views.decorators.http import require_http_methods
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger#Пагинатор
 
 from django.core.mail import send_mail#отправка сообщении через почту
 from django.core import mail
@@ -54,6 +54,44 @@ import json
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.template.loader import get_template
+
+
+#django signals examples
+from django.core.signals import request_finished
+from django.dispatch import receiver, Signal
+
+#Export Data to CSV File
+import csv
+
+#Using WeasyPrint преобразовывает html в pdf фомат
+#from django.core.files.storage import FileSystemStorage
+#from weasyprint import HTML
+
+
+
+def export_users_csv(request):
+	print("i'm here")
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="users.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['Location', 'Age', 'Email' ])
+
+	users_profiles = UserProfile.objects.all().values_list('location', 'age', 'mail')
+	for user_prof in users_profiles:
+		writer.writerow(user_prof)
+
+	return response
+
+@receiver(request_finished)
+def my_callback(sender, **kwargs):
+	print("request finished")
+
+request_counter_signal = Signal(providing_args=['timestamp'])
+
+@receiver(request_counter_signal)
+def post_counter_signal_reciever(sender, **kwargs):
+	print(kwargs)
 
 #User = get_user_model()
 #user = User.objects.get(username)
@@ -77,6 +115,12 @@ class ViewHeadingDetail(ObjectDetailMixinAndComments, View):
 	model = Heading
 	template = 'translate/view_heading_detail.html'
 
+	
+	def post(self, request, *args, **kwargs):
+		change_file = Heading.objects.get(title__iexact = self.kwargs["title"])
+		change_file.file_upload.delete()
+		return render(request, self.template, context = {'heading' : change_file})
+
 
 #	def get(self, request, title):
 
@@ -90,7 +134,7 @@ class HeadingCreate(LoginRequiredMixin, View):
 
 	def post(self,request):
 		
-		bound_form = HeadingCreateForm(request.POST)
+		bound_form = HeadingCreateForm(request.POST, request.FILES)
 
 		if bound_form.is_valid():
 			new_title = bound_form.save()
@@ -112,63 +156,144 @@ def LearnMore(request):
 	return render(request, 'translate/learn_more.html', context={'article': article})
 
 #Главная страница блога
-def Post(request):
-
-
-
+class Post(View):
 	
-#	search_query = request.GET.get('search', '')
+	template_name = 'translate/blog.html'
+	request_counter_signal.send(sender = Blog, timestamp='2019-01-01')
 
-#	if search_query:
-#		blogs = Blog.objects.filter(Q(title__icontains = search_query) | Q(text__icontains = search_query))
-#	
-#	else:
-#		blogs = Blog.objects.all()
+	def get(self, request):
+		#download data users excel
+		export_users_csv(request)
+	#это старый поиск_______________
+		#search_query = request.GET.get('search', '')
+		#context = {}
+		#если пользователь нажал на поиск будет работать это часть кода
+		#if search_query:
 
-# ___________________PAGINATOR______________________________________
-	blogs = Blog.objects.all()
-	paginator = Paginator(blogs, 1)
-	page_number = request.GET.get('page', 1) #в методе GET в обьекте request в ключе page находится адрес страницы ?page=, 1 это по умолчанию 1 страница
-	page = paginator.page(page_number)
+		#	blogs = Blog.objects.filter(Q(title__icontains = search_query) | Q(text__icontains = search_query))
+		#	context['page_object'] = blogs
 
-	is_paginated = page.has_other_pages() # возвращает True or False если вообщем есть список постов
+		#	print('это часть кода работает')
+		#	return render(request, 'translate/blog.html', context = context)
+		#else:
+			#если не нажал на поиск то будет отоброжаться пагинация
 
-	if page.has_previous():
-		prev_url = '?page={}'.format(page.previous_page_number())
-	else:
-		prev_url = ''
+	#это новй поиск________________________________________________
+		search_query = request.GET.get('search', '')
+		print(search_query)
+		if search_query:
+			try:
+				# Попытаемся разбить поисковый запрос на пару ключ/значение
+				key, value = search_query.split(':')
+				print(key)
+				print(value)
+				print('my point2')
+				# Если удалось и нет исключения, то проверяем, является ли ключ исправным, а значение является ли числом
+				if key == 'blog' and value.isdigit(): #isdigit() метод работает только с строковыми значениями
+					# если да, то то фильтруем темы по внешнему ключу статей
+					object_list = Blog.objects.filter(id__icontains = value)
 
-	if page.has_next():
-		next_url = '?page={}'.format(page.next_page_number())
-	else:
-		next_url = ''
+				else:
+					# в противном случае выкидываем исключение
+					print("error")
+					raise ValueError
+			except ValueError:
+				# При исключении делаем обычный поиск по заголовку тем, содержанию тем и содержанию сообщений в темах форума
+				print("point3")
+				object_list = Blog.objects.filter(
+					Q(title__icontains = search_query) | 
+					Q(text__icontains = search_query)
 
-	context = {
-		'blogs' : page,
-		'is_paginated' : is_paginated,
-		'next_url' : next_url,
-		'prev_url' : prev_url,
- 	}
+				).distinct().order_by('date')
 
-	return render(request, 'translate/blog.html', context = context)
+		else:
+			print('my point')
+			# если поисковый запрос отсутствует, то выполняем обычную выборку статей
 
-#def ViewBlogDetail(request, title):
 
-	#User = get_user_model()
-	#user = User.objects.get(id=1)
-	#blog = Blog.objects.filter(title__icontains=title)
-	#like = Like.objects.create(content_type=ContentType.objects.get_for_model(blog), object_id=blog.id, user=user)
-	#like = Like.objects.create(content_object=blog, like_number = 1, user = user)
-	#like.save()
-	#like.like_number+=1
-	#b=like.like_number
+# ___________________PAGINATOR_____________________________________
 		
+			objects = Blog.objects.all()
+			number = 2
+			paginator = Paginator(objects, number)#список количества отоброжаемых статей в странице
+			page_number = request.GET.get('page', 1) #в методе GET в обьекте request в ключе page находится адрес страницы ?page=, 1 это по умолчанию 1 страница
+			page = paginator.get_page(page_number)
+
+			is_paginated = page.has_other_pages() # возвращает True or False если вообщем есть список постов
+
+			if page.has_previous():
+				prev_url = '?page={}'.format(page.previous_page_number())
+			else:
+				prev_url = ''
+
+			if page.has_next():
+				next_url = '?page={}'.format(page.next_page_number())
+			else:
+				next_url = ''
+			
+			context = {
+				'page_object' : page,
+				'is_paginated' : is_paginated,
+				'next_url' : next_url,
+				'prev_url' : prev_url,			
+			}
+
+			return render(request, self.template_name, context = context)
+
+		return render(
+			request=request,
+			template_name=self.template_name,
+			context={
+
+				'page_object' : object_list,
+				'search_query': search_query or '',
+				#'object_list': get_paginated_page(request, object_list, 2),
+				'last_question': request.get_full_path().replace(request.path, '') # url для пагинации с учётом вопроса
+			}
+
+		)
 
 
 
 #	blog = Blog.objects.get(title__iexact=title)
 #	comments_id = blog.id
 #	return render(request, 'translate/view_blog_detail.html', context ={'blog': blog, 'comments': Comments.objects.filter(reletionships_id=comments_id)})
+
+# Смена URL без перезагрузки страницы с частичной подгрузкой контента______________________________
+
+def get_paginated_page(request, objects, number=2):
+	
+    current_page = Paginator(objects, number)
+    page = request.GET.get('page') if request.method == 'GET' else request.POST.get('page')
+    print('meirman_ahab_90')
+    print(page)
+    try:
+        return current_page.page(page)
+    except PageNotAnInteger:
+        return current_page.page(1)
+    except EmptyPage:
+        return current_page.page(current_page.num_pages)
+
+#from django.core import serializers преднозначен для передачи xml формата по json
+class indexVi(View):
+	#d = serializers.serialize('xml', Blog.objects.all(), fields=('title','text'))
+	def get(self, request):
+		return render(request, 'translate/pagination_list.html', context = {'object_list' : get_paginated_page(request, Blog.objects.all())})
+
+	def post(self, request):
+		if request.is_ajax():
+			blogs = Blog.objects.all()
+			data = {
+				"result": True,
+				"articles": render_to_string(
+					request=request,
+					template_name='translate/pagination_list.html',
+					context = {'object_list' : get_paginated_page(request, Blog.objects.all())}
+				)
+			}
+			return JsonResponse(data)
+		else:
+			raise Http404()
 
 class ViewBlogDetail(ObjectDaetailViewPostMixin, View):
 
@@ -205,17 +330,6 @@ class ViewBlogDetail(ObjectDaetailViewPostMixin, View):
 			
 			return redirect('/accounts/login/')#это  готовая аутентификация, я ее выключил пока работает своя написанная аутен
 	
-
-'''
-def addLike(request, article_id):
-	try:
-		likes_set = Blog.objects.get(id = article_id)
-		likes_set.likes += 1
-		likes_set.save()
-	except ObjectDoesNotExist:
-		raise Http404
-	return redirect('first_list_url')
-'''
 
 class SendContact(View):
 
@@ -387,16 +501,33 @@ class BookmarkView(View):
 
 #регистрация пользователя с использованием ajax для проверки существующего пользователя
 #_reCAPTCHA____________________________________________________________________________
+# плюс дополнительное рассширение Пользователя(age, location)
 class SignUpView(CreateView):
 	template_name = 'regist/signup.html'
 	form_class = UserCreationForm
+	profile_form = UserProfileForm()#дополнительное рассширение Пользователя(age, location)
 
+	def get_context_data(self, **kwargs):# все элементы контекста
+		context = {}
+		context = super(SignUpView, self).get_context_data(**kwargs)#этод метод отправляет все контексты главного класса в шаблон
+		context['profile_form'] = self.profile_form #это дополнительный контекст расширение Пользователя 
+		return context
+		
 	def form_valid(self, form):
-		# проверка валидности reCAPTCHA
-		if self.request.recaptcha_is_valid:
+		profile_form = UserProfileForm(self.request.POST)
+
+		# проверка валидности reCAPTCHA и дополнительное рассширение Пользователя(age, location)
+		if self.request.recaptcha_is_valid and profile_form.is_valid():
+
+			user = form.save()
+			profile = profile_form.save(commit=False)# Create, but don't save the new profile instance.
+			profile.user = user
+			profile.save()#данные сохроняются в админ панели в User profiles
 			form.save()
+
 			messages.success(self.request, 'Your password was created successfully!')
 			return render(self.request, 'regist/signup_success.html', self.get_context_data())
+
 		messages.warning(self.request, 'You need repeat again')
 		return render(self.request, 'regist/signup.html', self.get_context_data())
 
@@ -450,3 +581,27 @@ class VotesView(View):
 			'sum_rating' : obj.votes.sum_rating()
 		}
 		return JsonResponse(data)
+
+
+#Using WeasyPrint преобразовывает html в pdf фомат___________________________________________
+
+#здесь я не разобрался с установкой данного модуля
+# нужно потом создать шаблон - 'translate/export_pdf.html'
+
+
+#def html_to_pdf_view(request):
+#	# Обработка шаблона
+#	paragraphs = ['first list', 'second list', 'third list' ]
+#	html_string = render_to_string('translate/export_pdf.html', {'paragraphs': paragraphs})
+
+#	html = HTML(string=html_string)
+#	html.write_pdf(target='/tmp/mypdf.pdf');
+
+#	fs = FileSystemStorage('/tmp')
+	# Создание http ответа
+#	with fs.open('mypdf.pdf') as pdf:
+#		response = HttpResponse(pdf, content_type = 'application/pdf')
+#		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+#		return response
+
+#	return response

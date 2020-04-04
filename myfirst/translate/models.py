@@ -8,8 +8,15 @@ from django.shortcuts import reverse
 from django.contrib import admin
 from django.contrib import auth
 from django.contrib.auth import get_user_model#получаем данные User
+from django.contrib.auth.models import User
 
 User = get_user_model()
+
+
+#Django signals settings
+from django.db.models.signals import post_save
+
+from translate.signals import *
 
 # Этот класс преднозначен для дополнительной инфомации в Learn More
 #__________________________________________________________
@@ -70,10 +77,18 @@ class Tweet(models.Model):
 class Heading(models.Model):
 
 	title = models.CharField(max_length = 50, unique = True) 
-	text = models.TextField(blank = True) 
+	text = models.TextField(blank = True)
+	file_upload = models.FileField(upload_to = 'documents', blank = True)
+	cover = models.ImageField(upload_to = 'covers/', null = True, blank = True)
+#	have_file = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.title
+
+	def delete(self, *args, **kwargs):
+		self.file_upload.delete()
+		self.cover.delete()
+		super().delete(*args, **kwargs)
 
 	def get_absolute_url(self):
 		return reverse('heading_detail_url', kwargs = {'title': self.title})
@@ -141,3 +156,20 @@ class BookmarkBlog(BookmarkBase):#наследуем данные от абст�
 	obj = models.ForeignKey(Blog, on_delete=models.CASCADE, verbose_name = 'Статья')#делаем связь с статьей
 	#получаеться у класса BookmarkBlog два поля модели это user, obj
 	status_bookmark = models.BooleanField("Статус заметки", default = False)
+
+#Расширение User models_______________________________________________________
+class UserProfile(models.Model):
+	user =  models.OneToOneField(User, on_delete=models.CASCADE)
+
+	location = models.CharField(max_length=30)
+	age = models.IntegerField()
+	mail = models.EmailField(max_length=50, blank=True)
+
+	def __str__(self):
+		return self.user.username
+
+
+
+def save_post(sender, instance, **kwargs):
+	print("do something!")
+post_save.connect(save_post, sender=Blog)

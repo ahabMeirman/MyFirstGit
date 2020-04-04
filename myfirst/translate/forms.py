@@ -29,12 +29,14 @@ class HeadingCreateForm(forms.ModelForm):
 # Это более лучше и короткий способ обьявлении форм с помощью Meta
 	class Meta:
 		 model = Heading
-		 fields = ['title','text']
-
-		 widgets = {
-		 	'title' : forms.TextInput(attrs={'class':'form-control'}),
-		 	'text' : forms.TextInput(attrs={'class':'form-control'})
-		 }
+		 fields = ['title','text', 'file_upload', 'cover']
+#здесь используется встроенные виджеты, они в настройках crispy_forms, в шаблоне
+#		 widgets = {
+#		 	'title' : forms.TextInput(attrs={'class':'form-control'}),
+#		 	'text' : forms.TextInput(attrs={'class':'form-control'}),
+#		 	'file_upload' : forms.FileInput(attrs={'class' : 'form-control'}),
+#		 	'cover' : forms.FileInput(attrs={'class' : 'form-control'})
+#		 }
 
 	def clean_slug(self):
 
@@ -86,3 +88,9 @@ class SendContactForm(forms.Form):
 	name.widget.attrs.update({'class':'form-control'})
 	email.widget.attrs.update({'class':'form-control'})
 	message.widget.attrs.update({'class':'form-control'})
+
+#Форма для рассширения User models__________________________________________
+class UserProfileForm(forms.ModelForm):
+	class Meta:
+		model = UserProfile
+		fields = ('location', 'age', 'mail')

@@ -40,8 +40,13 @@ INSTALLED_APPS = [
     'translate.apps.TranslateConfig',
     'likes.apps.LikesConfig',
     'ckeditor',
-    'ckeditor_uploader',
+    'ckeditor_uploader', #это редактор текста в админке, вспомогательное приложение
+    'crispy_forms', #Это приложения предноз-на для отоброжения в шаблоне загружаемых файлов
+    'django.contrib.sites',
+    'django.contrib.flatpages',
 ]
+#Это приложения предноз-на для отоброжения в шаблоне загружаемых файлов
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -51,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'myfirst.urls'
@@ -127,9 +133,12 @@ USE_TZ = True
 #    ('static', '\Python34\Django\myfirst\static')
 #]
 
-
-STATICFILES_DIRS = [ os.path.join(BASE_DIR, 'static') ]
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [ os.path.join(BASE_DIR, 'static'), ]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # порт нужно смотреть на сервере в его настройках
@@ -145,6 +154,10 @@ LOGIN_REDIRECT_URL = '/translate/'
 
 #reCAPTCHA
 GOOGLE_RECAPTCHA_SECRET_KEY = '6LfF7tcUAAAAAPYYDTVLvVVN3gjiZEzOcDsSppkj'
+
+SITE_URL = 'meirman_ahab_90@mail.ru'
+#это настройка для flatpages
+SITE_ID = 1
 
 #VERSION SKEditor 4!!!!!!!!!!!_______________________________________
 #путь куда мы будем загружать изоброжение с попмощью пакета CKEditor

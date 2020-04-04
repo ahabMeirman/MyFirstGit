@@ -9,14 +9,14 @@ class ObjectDetailMixinAndComments:
 
 	model = None
 	template = None
-	form_take = None
+	
 
 	def get(self, request, *args, **kwargs):
 
 		obj = get_object_or_404(self.model, title__iexact = self.kwargs["title"])
-		f = self.form_take
+		
 		comments_id = obj.id
-		return render(request, self.template, context = {self.model.__name__.lower(): obj, 'comments': Comments.objects.filter(reletionships_id=comments_id), 'form': f })
+		return render(request, self.template, context = {self.model.__name__.lower(): obj, 'comments': Comments.objects.filter(reletionships_id=comments_id) })
 
 #This is original type function:
 #	def get(self, request, title):

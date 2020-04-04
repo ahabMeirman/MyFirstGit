@@ -1,61 +1,162 @@
 {% extends 'translate/index.html' %}
 {% load static %}
 
-
 {% block content %}
 
-	{% for blog in blogs.object_list %}
-		<div class="card mb-4">
-			<div class="card-header">
-				{{blog.date}}
-			</div>
-			<div class="card-body">
-				<h5 class="card-title"> {{blog.title}} </h5>
-				<p class="card-text"> {{ blog.text|truncatewords:20|safe }}</p> <!-- фильтр safe убирает html теги, здесь мы используем плагин SKEditor -->
-				<a href="{{ blog.get_absolute_url }}" class="btn btn-light">Read</a>		
-			</div>
-			
-			<div class="card-footer text-muted">
+
+	<div id="blog_list">
+		{% for blog in page_object %}
+		{# здесь ключевым является page_object - это количество страниц пагинации или список найденных постов с помощью поиска, проверка поиска происходит в предстовлении Post #}
+			<div class="card mb-4">
+				<div class="card-header">
+					{{blog.date}}
+				</div>
+				<div class="card-body">
+					<h5 class="card-title"> {{blog.title}} </h5>
+					<p class="card-text"> {{ blog.text|truncatewords:20|safe }}</p> <!-- фильтр safe убирает html теги, здесь мы используем плагин SKEditor -->
+					<a href="{{ blog.get_absolute_url }}" class="btn btn-light">Read</a>
+
+						
+				</div>
 				
+				<div class="card-footer text-muted">
+					<p id="demo"></p>
+				</div>
+	<!-- Вот здесь обязательный параметр {% url 'view_blog_detail_url' title=blog.title %} указываем откуда берется title-->
 			</div>
-<!-- Вот здесь обязательный параметр {% url 'view_blog_detail_url' title=blog.title %} указываем откуда берется title-->
-		</div>
+		{% endfor %}
+	</div>
+	
 		
-	{% endfor %}
+		
 
-<!-- Пагинация -->
-	{% if is_paginated %}
-		<nav aria-label="...">
-			<ul class="pagination">
-				<li class="page-item {% if not prev_url %} disabled {% endif %}">
-					<a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Previous</a>
-				</li>
-				{% for n in blogs.paginator.page_range %}
+	<!-- Пагинация -->
 
-					{% if blogs.number == n%}
-						<li class="page-item active" aria-current="page">
-							<a class="page-link" href="?page={{ n }}">{{ n }} 
-								<span class="sr-only">(current)</span>
-							</a>
+
+			{% if is_paginated %}
+
+				<nav aria-label="...">
+					<ul class="pagination">
+						<li class="page-item {% if not prev_url %} disabled {% endif %}">
+							<a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Previous</a>
 						</li>
-					{% elif n > blogs.number|add:-2 and n < blogs.number|add:2 %}
+						{% for n in page_object.paginator.page_range %}
 
-						<li class="page-item">
-							<a class="page-link" href="?page={{ n }}">{{ n }}</a>
+							{% if page_object.number == n%}
+								<li class="page-item active" aria-current="page">
+									<a class="page-link" href="?page={{ n }}">{{ n }} 
+										<span class="sr-only">(current)</span>
+									</a>
+								</li>
+							{% elif n > page_object.number|add:-2 and n < page_object.number|add:2 %}
+
+								<li class="page-item">
+									<a class="page-link" href="?page={{ n }}">{{ n }}</a>
+								</li>
+							{% endif %}
+						{% endfor %}
+						
+						
+						<li class="page-item {% if not next_url %} disabled {% endif %}">
+							<a class="page-link" href="{{ next_url }}" tabindex="-1" aria-disabled="true">Next</a>
 						</li>
-					{% endif %}
-				{% endfor %}
-				
-				
-				<li class="page-item {% if not next_url %} disabled {% endif %}">
-					<a class="page-link" href="{{ next_url }}" tabindex="-1" aria-disabled="true">Next</a>
-				</li>
-			</ul>
-		</nav>
-	{% endif %}
-
+					</ul>
+				</nav>
+			{% endif %}
 {% endblock %}
 
 {% block javascript %}
+		<script type="text/javascript">
+		// Получение переменной cookie по имени
+		//Данные две функции используются только в POST запросах
+		function getCookie(name) {
+			var cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				var cookies = document.cookie.split(';');
+				for (var i = 0; i < cookies.length; i++) {
+						var cookie = jQuery.trim(cookies[i]);
+	            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		            	cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            		break;
+            			}
+        			}
+    			}
+    		return cookieValue;
+		}
 
+		// Настройка AJAX
+		$(function () {
+			$.ajaxSetup({
+				headers: { "X-CSRFToken": getCookie("csrftoken") }
+			});
+		});
+
+		
+		//извлекаем параметр из URL, используется данная функция хорошо в пагинаторе
+		//function link_click(event){
+		//	//event.preventDefault();//это метод преднозначен для перехвата события клика
+		//	let path = event.target.href;//здесь получаем адрес
+		//}
+
+		function getURLParameter(sURL, sParam){
+			let sPageURL = sURL.substring(sURL.indexOf('?') + 1);// получается substring(23+1) page=24&info=13, 
+			let sURLVariables = sPageURL.split('&'); //получается  ["page=24", "info=13"] 0: "page=24" 1: "info=13"
+			for (let i = 0; i < sURLVariables.length; i++){
+				let sParametrName = sURLVariables[i].split('=');//["page", "24"] 0:"page",  1:"24"
+				if (sParametrName[0] == sParam){ //page == page
+					return sParametrName[1]; //"24"
+				}
+
+			}
+		}
+
+		//getURLParameter('http://www.example.com/?page=24&info=13', 'page');
+		//getURLParameter('http://www.example.com/?page=24&info=13', 'info');
+
+		class Index {
+
+			static initPaginator(){
+				document.body.querySelectorAll(".pagination")
+					.forEach(link => link.addEventListener('click', Index.pagination_link_clickHandler));
+			}
+
+			static pagination_link_clickHandler(event){
+				event.preventDefault();// запрещаем событие, это метод преднозначен для перехвата события клика
+
+				let path = event.target.href;// забираем путь
+				let page = window.getURLParameter(path, 'page');// здесь Global не работает, на моем браузере работает - window
+
+				if (typeof page !== 'undefined'){
+					$.ajax({
+						url : '{% url "index_url" %}',
+						type : 'POST',
+						dataType : 'json',
+						data : {'page': getURLParameter(path, 'page')},//передаем на сервер данные, а за тем во вьхе получем вот так request.GET.get('page')
+						success : function(data){
+							if (data.result){
+								window.history.pushState({route:path}, "blog", path);// устанавливаем URL в строку браузера
+								$("#blog_list").replaceWith(data.articles);// Заменяем div со списком статей на новый
+								Index.initPaginator(); // Переинициализируем пагинатор
+								$(window).scrollTop(0);// Скроллим страницу в начало
+
+
+								console.log(data);
+							}
+						}
+					});
+				}
+
+			}
+		}
+
+
+		search_dropdown.onclick = function dropdown(event){
+			alert('ahab');
+			$(".menu");
+		}
+
+		Index.initPaginator();
+	</script>
 {% endblock %}
+

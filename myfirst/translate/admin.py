@@ -19,8 +19,10 @@ class BlogAdmin(admin.ModelAdmin):
 
 #регистрация__________________________________________________________________________
 admin.site.register(Articles)
+admin.site.register(Heading)
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(Comments)
 admin.site.register(BlogCommonStatistic, BlogCommonStatisticAdmin)
 admin.site.register(LimitAuthBanIp, LimitAuthBanIpAdmin)
 admin.site.register(BookmarkBlog)
+admin.site.register(UserProfile)#дополнительное рассширение Пользователя(age, location, mail)

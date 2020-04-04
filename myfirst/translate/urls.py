@@ -10,8 +10,8 @@ urlpatterns = [
     path('logout/', myLogout, name = 'logout_url'),
     path('heading/create/', HeadingCreate.as_view(), name = 'heading_create_url'),
    	path('heading/<str:title>/', ViewHeadingDetail.as_view(), name = 'heading_detail_url'),
-    
-    path('blog/', Post, name = 'blog_url'),
+   
+    path('blog/', Post.as_view(), name = 'blog_url'),
     path('blog/<str:title>/', ViewBlogDetail.as_view(), name = 'view_blog_detail_url'),
     #система добавление и удоление закладок, здесь могут закладки добовлять тольео зарегистрированные пользователи  
     path('blog/<str:title>/ajax/', login_required(BookmarkView.as_view(modelbookmark = BookmarkBlog)), name = 'blog_bookmark'),
@@ -28,6 +28,14 @@ urlpatterns = [
     # ajax система лайков_______________
     path('blog/<str:title>/like/', login_required(VotesView.as_view(model = Blog, vote_type = LikeDislike.LIKE)), name = 'blog_like_url'),
     path('blog/<str:title>/dislike', login_required(VotesView.as_view(model = Blog, vote_type = LikeDislike.DISLIKE)), name = 'blog_dislike_url'),
+
+    #Смена URL без перезагрузки страницы с частичной подгрузкой контента
+    path('ajax/pagination/', indexVi.as_view(), name='index_url'),
+
+    #download data users excel
+    path('export/csv/', export_users_csv, name='export_users_csv'),
+    #Using WeasyPrint преобразовывает html в pdf фомат
+#   path('export/pdf/', html_to_pdf_view, name = 'html_to_pdf_view_url'), здесь я не разобрался с установкой данного модуля
 ]
 
 
