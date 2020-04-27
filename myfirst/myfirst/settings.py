@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'ckeditor_uploader', #это редактор текста в админке, вспомогательное приложение
     'crispy_forms', #Это приложения предноз-на для отоброжения в шаблоне загружаемых файлов
     'django.contrib.sites',
-    'django.contrib.flatpages',
+    'django.contrib.flatpages',# статическая страница типа - О себе
+    'django_filters', #преднозначен для фильтрации пользователей и поиска
+    'widget_tweaks', # приложение для рендеринга полей(используется в html странице - user_list.html)
 ]
 #Это приложения предноз-на для отоброжения в шаблоне загружаемых файлов
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

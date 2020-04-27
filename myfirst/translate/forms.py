@@ -94,3 +94,10 @@ class UserProfileForm(forms.ModelForm):
 	class Meta:
 		model = UserProfile
 		fields = ('location', 'age', 'mail')
+
+
+#Загрузка мультифайлов(несколько) с помощью Ajax_____________________________
+class PhotoForm(forms.ModelForm):
+	class Meta:
+		model = Photo
+		fields = ('file', )

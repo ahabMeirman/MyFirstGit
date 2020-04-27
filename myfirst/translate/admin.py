@@ -13,7 +13,7 @@ class BlogAdminForm(forms.ModelForm):
 
 class BlogAdmin(admin.ModelAdmin):
 
-	list_display = ('title', 'text', 'date')
+	list_display = ('title', 'text', 'date',)
 	search_fields = ('__str__',)
 	form = BlogAdminForm
 
@@ -26,3 +26,4 @@ admin.site.register(BlogCommonStatistic, BlogCommonStatisticAdmin)
 admin.site.register(LimitAuthBanIp, LimitAuthBanIpAdmin)
 admin.site.register(BookmarkBlog)
 admin.site.register(UserProfile)#дополнительное рассширение Пользователя(age, location, mail)
+admin.site.register(Photo)#Загрузка мультифайлов(несколько) с помощью Ajax

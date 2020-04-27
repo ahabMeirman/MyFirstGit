@@ -2,6 +2,10 @@ from django.urls import path
 from .views import *
 from django.contrib.auth.decorators import login_required#декоратор огроничения доступа, здксь не используется @, а просто обьект на который есть огроничение захватывается в кавычки
 from .decorators import check_recaptcha
+from .view import * 
+# настройки предназначенные для фильтрации и поиска пользователей
+from django_filters.views import FilterView #это специальный класс
+from .filters import UserFilter
 
 urlpatterns = [
 	#path('', Base),
@@ -33,9 +37,18 @@ urlpatterns = [
     path('ajax/pagination/', indexVi.as_view(), name='index_url'),
 
     #download data users excel
-    path('export/csv/', export_users_csv, name='export_users_csv'),
+    path('export/csv/', export_exel.export_users_csv, name='export_users_csv'),
     #Using WeasyPrint преобразовывает html в pdf фомат
 #   path('export/pdf/', html_to_pdf_view, name = 'html_to_pdf_view_url'), здесь я не разобрался с установкой данного модуля
+    
+    #Загрузка мультифайлов(несколько)
+    path('progress-bar-upload/', multiple_upload.ProgressBarUploadView.as_view(), name='progress_bar_upload_url'),
+    
+    #Filter QuerySets
+    #path('search/', queryset_filter.search, name = 'search_url'),
+    #Filter QuerySets это тоже фильтр но только с использованием  Generic Class-Based View
+    # здесь уже готовоя функция, и не надо подключать вьюху, просто есть аргумент где указ filterset_class=UserFilter
+    path('search/', FilterView.as_view(filterset_class=UserFilter, template_name='queryset_filter/user_list.html'), name='search_url'),
 ]
 
 

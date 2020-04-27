@@ -81,6 +81,7 @@ class Heading(models.Model):
 	file_upload = models.FileField(upload_to = 'documents', blank = True)
 	cover = models.ImageField(upload_to = 'covers/', null = True, blank = True)
 #	have_file = models.BooleanField(default=False)
+	#upload_to - путь сохранения файлов в media папку
 
 	def __str__(self):
 		return self.title
@@ -173,3 +174,12 @@ class UserProfile(models.Model):
 def save_post(sender, instance, **kwargs):
 	print("do something!")
 post_save.connect(save_post, sender=Blog)
+
+#Загрузка мультифайлов(несколько) с помощью Ajax___________________________________
+class Photo(models.Model):
+	title = models.CharField(max_length=255, blank=True)
+	file = models.FileField(upload_to='photos/')
+	uploaded_at = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.title
