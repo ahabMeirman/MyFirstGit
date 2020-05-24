@@ -491,7 +491,7 @@ class BookmarkView(View):
 # плюс дополнительное рассширение Пользователя(age, location)
 class SignUpView(CreateView):
 	template_name = 'regist/signup.html'
-	form_class = UserCreationForm
+	form_class = CaseInsensitiveUserCreationForm
 	profile_form = UserProfileForm()#дополнительное рассширение Пользователя(age, location)
 
 	def get_context_data(self, **kwargs):# все элементы контекста

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'translate.apps.TranslateConfig',
     'likes.apps.LikesConfig',
+    'cropimage.apps.CropimageConfig', # приложение для изменение размера изоброжения 
     'ckeditor',
     'ckeditor_uploader', #это редактор текста в админке, вспомогательное приложение
     'crispy_forms', #Это приложения предноз-на для отоброжения в шаблоне загружаемых файлов
@@ -160,6 +161,9 @@ GOOGLE_RECAPTCHA_SECRET_KEY = '6LfF7tcUAAAAAPYYDTVLvVVN3gjiZEzOcDsSppkj'
 SITE_URL = 'meirman_ahab_90@mail.ru'
 #это настройка для flatpages
 SITE_ID = 1
+
+
+AUTHENTICATION_BACKENDS = ('translate.backends.CaseInsensitiveModelBackend', )
 
 #VERSION SKEditor 4!!!!!!!!!!!_______________________________________
 #путь куда мы будем загружать изоброжение с попмощью пакета CKEditor

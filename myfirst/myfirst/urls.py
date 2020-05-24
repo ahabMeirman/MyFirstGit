@@ -30,6 +30,7 @@ urlpatterns = [
     #Add Django site authentication urls (for login, logout, password management)
     #path('accounts/', include('django.contrib.auth.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),#flatpages
+    path('cropimage/', include('cropimage.urls')), # приложение для изменение размера изоброжения
 ]
 
 # File Upload:

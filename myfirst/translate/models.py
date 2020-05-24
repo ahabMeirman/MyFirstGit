@@ -158,13 +158,14 @@ class BookmarkBlog(BookmarkBase):#наследуем данные от абст�
 	#получаеться у класса BookmarkBlog два поля модели это user, obj
 	status_bookmark = models.BooleanField("Статус заметки", default = False)
 
+#Extend Django User Model
 #Расширение User models_______________________________________________________
 class UserProfile(models.Model):
 	user =  models.OneToOneField(User, on_delete=models.CASCADE)
 
 	location = models.CharField(max_length=30)
 	age = models.IntegerField()
-	mail = models.EmailField(max_length=50, blank=True)
+	mail = models.EmailField(max_length=50, blank=True)# не обязательное поле к заполнению
 
 	def __str__(self):
 		return self.user.username
@@ -172,7 +173,7 @@ class UserProfile(models.Model):
 
 
 def save_post(sender, instance, **kwargs):
-	print("do something!")
+	print("do something!") 
 post_save.connect(save_post, sender=Blog)
 
 #Загрузка мультифайлов(несколько) с помощью Ajax___________________________________
