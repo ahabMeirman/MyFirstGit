@@ -15,7 +15,7 @@
 	<link href="{% static 'css/cropper.min.css' %}" rel="stylesheet"> {# это файлы приложения cropimage cropper#}
 
 	<title>
-		{% block title %} Переводчиские услуги {% endblock %}
+		{% block title %} Lorem Ipsum {% endblock %}
 	</title>
 
 </head>
@@ -24,7 +24,7 @@
 
 	<!-- Верхняя шапка меню -->
 	<nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark">
-		<a class="navbar-brand" href="{% url 'blog_url' %}">Blog</a>
+		<a class="navbar-brand" href="{% url 'blog_url' %}">Блог</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -32,27 +32,28 @@
 		<div class="collapse navbar-collapse" id="navbarsExampleDefault">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active">
-					<a class="nav-link" href="{% url 'first_list_url' %}">Home <span class="sr-only">(current)</span></a>
+					<a class="nav-link" href="{% url 'first_list_url' %}">Домой<span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{% url 'send_contact_url' %}">Contact</a>
+					<a class="nav-link" href="{% url 'send_contact_url' %}">Напишите нам</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="#" data-toggle="modal" data-target="#exampleModal">Modal action</a>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+					<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Дополнительно</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown01">
-						<a class="dropdown-item" href="{% url 'export_users_csv' %}">download data users excel</a>
-						<a class="dropdown-item" href="{% url 'heading_create_url' %}">Creat heading</a>
-						<a class="dropdown-item" href="{% url 'search_url' %}">Search User</a>
+						<a class="dropdown-item" href="{% url 'export_users_csv' %}">Скачать data users excel</a>
+						<a class="dropdown-item" href="{% url 'heading_create_url' %}">Создать заголовок</a>
+						<a class="dropdown-item" href="{% url 'search_url' %}">Найти пользователя</a>
+						<a class="dropdown-item" href="{% url 'photo_list_url' %}">Использовать cropimage для обрезки фото</a>
 					</div>
 				</li>
 			</ul>
 			<!-- Смотри как делается поиск и запомни это важно-->
 			<form class="form-inline my-2 my-lg-0" action="{% url "blog_url" %}">
 				<input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search">
-				<button id="search_dropdown" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search
+				<button id="search_dropdown" class="btn btn-outline-success my-2 my-sm-0" type="submit">Найти статью
 				</button>
 			</form>
 		</div>
@@ -70,28 +71,7 @@
 			</div>
 		</div>		
 	</div>
-	
-	<div id="sear">
-		<ul class="men-item col-6">
-			Меню1
-			<li class="submenu">
-				Подменю1
-			</li>
-			<li class="submenu">
-				Подменю2
-			</li>
-			<li class="submenu">
-				Подменю3
-			</li>
-		</ul>
-
-	</div>
-	
-	<a class="menu-link menu-link_active" href="#menu">
-		<span></span>
-	</a> 
-
-	<h1 id="ahab">AHAB</h1>   
+	 
 
 {% block jumbotron %}
 
@@ -113,7 +93,7 @@
 
 				</p>
 				<p>
-					<a class="btn btn-secondary" href="{{ heading.get_absolute_url }}" role="button">View details &raquo;
+					<a class="btn btn-secondary" href="{{ heading.get_absolute_url }}" role="button">Подробнее &raquo;
 					</a>
 				</p>
 		
@@ -130,9 +110,9 @@
 {% endblock %}
 
 <!-- Это блог с комментариями и лайками -->
-<div class="container-fluid"> <!-- Это настройки выведены за пределами {{block}} верхние и боковые отступы -->
+<div class="container"> <!-- Это настройки выведены за пределами {{block}} верхние и боковые отступы -->
 	<div class="row">
-		<div class="col-6 offset-md-2">
+		<div class="col-md-6">
 
 			
 			{% block content %}
@@ -151,9 +131,9 @@
 				{% endif %}
 				{% if user.is_authenticated %}
 					<li>User: {{ user.get_username }}</li>
-					<li><a href="{% url 'logout_url' %}?next={{request.path}}">Logout</a></li>   
+					<li><a href="{% url 'logout_url' %}?next={{request.path}}">Выйти</a></li>   
 				{% else %}
-					<li><a href="{% url 'log_url' %}?next={{request.path}}">Login</a></li>   
+					<li><a href="{% url 'log_url' %}?next={{request.path}}">Войти</a></li>   
 				{% endif %}
 			</div>
 
@@ -168,7 +148,7 @@
 <footer class="root">
 	{% for page in flatpages %}
 		<a href="/pages{{ page.url }}">
-			<p>&copy; artAhab company 2018-2019</p>
+			<p class="text-center">&copy; artAhab company 2018-2019</p>
 	 	</a>
 	 {% endfor %}
 

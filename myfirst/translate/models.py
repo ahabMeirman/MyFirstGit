@@ -179,6 +179,8 @@ post_save.connect(save_post, sender=Blog)
 #Загрузка мультифайлов(несколько) с помощью Ajax___________________________________
 class Photo(models.Model):
 	title = models.CharField(max_length=255, blank=True)
+	##при использовании ImageField или FileField нужно настроить settings, media, в url указать debug=document_root=settings.MEDIA_ROOT И
+	# в шаблонах указать ссылка изоброжения models.contextname.url и имя models.contextname.name
 	file = models.FileField(upload_to='photos/')
 	uploaded_at = models.DateTimeField(auto_now_add=True)
 

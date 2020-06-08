@@ -139,6 +139,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [ os.path.join(BASE_DIR, 'static'), ]
 
+# при комнаде manage.py collectstatic нужно обязательно комментировать STATICFILES_DIRS
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
@@ -154,6 +156,8 @@ DEFAULT_FROM_EMAIL = 'meirman_ahab_90@mail.ru' # email, с которого бу
 
 #после авторизации перекидывает на эту страницу:
 LOGIN_REDIRECT_URL = '/translate/'
+#если нет авторизованный, при попытке пройти по ссылке где нужен доступ авторизаций перекидывает на этот url
+LOGIN_URL = '/translate/log/'
 
 #reCAPTCHA
 GOOGLE_RECAPTCHA_SECRET_KEY = '6LfF7tcUAAAAAPYYDTVLvVVN3gjiZEzOcDsSppkj'

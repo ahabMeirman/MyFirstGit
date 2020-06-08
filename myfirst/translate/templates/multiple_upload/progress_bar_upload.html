@@ -34,7 +34,7 @@
     <tbody>
       {% for photo in photos %}
         <tr>
-          <td><a href="{{ photo.file.url }}">{{ photo.file.name }}</a></td>
+          <td><a href="{{ photo.file.url }}">{{ photo.file.name }}</a></td>{# это обязательно при зргрузке файлов указывать нужнотак - через url: blog.image.url #}
         </tr>
       {% endfor %}
     </tbody>

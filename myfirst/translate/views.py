@@ -150,7 +150,7 @@ class Post(View):
 
 	def get(self, request):
 		#download data users excel
-		export_users_csv(request)
+		#export_users_csv(request)
 	#это старый поиск_______________
 		#search_query = request.GET.get('search', '')
 		#context = {}
