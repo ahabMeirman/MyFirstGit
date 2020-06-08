@@ -22,7 +22,11 @@ from translate.views import * #можно сократить. необезате
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.views.generic.base import RedirectView # это глваный Url на который подстовляется домен
+
+
 urlpatterns = [
+    path('', RedirectView.as_view(url='/translate/')),
     path('admin/log/', MyLoginView.as_view()),
     path('admin/', admin.site.urls),
     path('ckeditor/', include('ckeditor_uploader.urls')),# обязательно в корневом файле подключение
