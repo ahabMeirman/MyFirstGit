@@ -29,7 +29,7 @@ pyowm==2.10.0
 Pyphen==0.9.5
 pypiwin32==223
 pytz==2019.3
-pywin32==224
+pywin32==301
 requests==2.22.0
 six==1.14.0
 soupsieve==1.9.5
