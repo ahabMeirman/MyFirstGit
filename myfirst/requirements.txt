@@ -24,7 +24,7 @@ kivy-deps.sdl2==0.1.22
 Kivy-Garden==0.1.4
 lxml==4.5.0
 olefile==0.46
-Pillow==7.0.0
+Pillow==9.0.1
 pycparser==2.20
 Pygments==2.4.2
 pyowm==2.10.0
